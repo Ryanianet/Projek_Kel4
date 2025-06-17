@@ -1,4 +1,3 @@
-// Load data dari Firebase (menampilkan yang disetujui)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
 
@@ -15,51 +14,51 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+let allItems = [];
+
 window.addEventListener("DOMContentLoaded", () => {
-  displayPublicItems();
-});
-
-function displayPublicItems() {
-  const publicList = document.getElementById("publicItemsList");
-  if (!publicList) return;
-
   const dataRef = ref(db, `artifacts/default-app-id/public/data/lostAndFound`);
-
   onValue(dataRef, (snapshot) => {
     const data = snapshot.val();
-    publicList.innerHTML = "";
+    allItems = [];
 
     if (data) {
-      const itemsArray = Object.keys(data)
+      allItems = Object.keys(data)
         .map(key => ({ id: key, ...data[key] }))
-        .filter(item => item.disetujui); // Hanya yang disetujui
-
-      if (itemsArray.length === 0) {
-        publicList.innerHTML = "<p>Belum ada laporan yang disetujui.</p>";
-        return;
-      }
-
-      itemsArray.forEach(item => {
-        const div = document.createElement("div");
-        div.className = `item-card ${item.tipe}-item`;
-        div.innerHTML = `
-          <div class="info">
-            <h3>${item.tipe === 'hilang' ? 'Barang Hilang' : 'Barang Temuan'}: ${item.barang}</h3>
-            <p><strong>Email:</strong> ${item.email}</p>
-            <p><strong>Nama:</strong> ${item.nama}</p>
-            <p><strong>No HP:</strong> ${item.nohp}</p>
-            <p><strong>Deskripsi:</strong> ${item.deskripsi}</p>
-            <p><strong>Tempat:</strong> ${item.tempat}</p>
-            <p><strong>Waktu:</strong> ${item.waktu}</p>
-          </div>
-        `;
-        publicList.appendChild(div);
-      });
-    } else {
-      publicList.innerHTML = "<p>Tidak ada laporan ditemukan.</p>";
+        .filter(item => item.disetujui);
     }
-  }, (error) => {
-    console.error("Gagal membaca data:", error);
-    publicList.innerHTML = "<p>Terjadi kesalahan saat memuat laporan.</p>";
+
+    filterItems('hilang'); // Default tampilan awal
   });
-}
+});
+
+window.filterItems = function(type) {
+  const listEl = document.getElementById("publicItemsList");
+  if (!listEl) return;
+
+  listEl.innerHTML = "";
+
+  const filtered = allItems.filter(item => item.tipe === type);
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = `<p>Tidak ada barang ${type === 'hilang' ? 'hilang' : 'temuan'} yang tersedia.</p>`;
+    return;
+  }
+
+  filtered.forEach(item => {
+    const div = document.createElement("div");
+    div.className = `item-card ${item.tipe}-item`;
+    div.innerHTML = `
+      <div class="info">
+        <h3>${item.tipe === 'hilang' ? 'Barang Hilang' : 'Barang Temuan'}: ${item.barang}</h3>
+        <p><strong>Email:</strong> ${item.email}</p>
+        <p><strong>Nama:</strong> ${item.nama}</p>
+        <p><strong>No HP:</strong> ${item.nohp}</p>
+        <p><strong>Deskripsi:</strong> ${item.deskripsi}</p>
+        <p><strong>Tempat:</strong> ${item.tempat}</p>
+        <p><strong>Waktu:</strong> ${item.waktu}</p>
+      </div>
+    `;
+    listEl.appendChild(div);
+  });
+};

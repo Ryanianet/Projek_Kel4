@@ -30,13 +30,21 @@
 
 <div class="container">
   <h1>Beranda - Barang Lost and Found</h1>
-  <p>Berikut adalah daftar barang hilang yang telah dilaporkan. Jika Anda menemukan atau kehilangan barang, mohon laporkan melalui halaman "Lapor".</p>
+  <p>Berikut adalah daftar barang yang telah dilaporkan dan disetujui oleh admin.</p>
 
-  <div id="publicItemsList" class="item-grid">
-    </div>
+  <div class="filter-buttons">
+    <button onclick="filterItems('hilang')">Barang Hilang</button>
+    <button onclick="filterItems('temuan')">Barang Temuan</button>
+  </div>
+
+  <div id="publicItemsList" class="item-grid"></div>
 </div>
 
 <script type="module" src="respon.js"></script>
 <script src="animasi.js"></script>
+<footer style="background-color: #f4f4f4; padding: 10px; text-align: center; border-top: 1px solid #ccc; margin-top: auto;">
+  <p>&copy; 2025 Lost & Found. Semua hak dilindungi.</p>
+  <p>Kontak kami: <a href="tel:+628123456789">+62 812-3456-789</a> | <a href="mailto:adminlnf@gmail.com">adminlnf@gmail.com</a></p>
+</footer>
 </body>
 </html>

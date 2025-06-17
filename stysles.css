@@ -1,39 +1,37 @@
-/* General */
-/* Hapus pengaturan height: 100% dan flexbox dari body di sini */
-/* agar hanya diatur per halaman jika diperlukan */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #ffffff;
+/* Layout dasar: buat footer selalu di bawah */
+html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
   background-image: url('img/bg1.png');
   background-repeat: repeat;
-  background-size: 500px; /* atur ukuran tile sesuai kebutuhan */
+  background-size: 500px;
 }
 
+/* Container utama fleksibel */
+.container {
+  flex: 1;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px 50px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
 
 /* Navbar */
 .navbar {
   display: flex;
   align-items: center;
   background-color: #ffffff;
-  padding: 10px 50px; /* padding kiri dan kanan */
+  padding: 10px 50px;
   border-bottom: 1px solid black;
-}
-
-.navbar-left {
-  flex: 0 0 auto;
-}
-
-.navbar-menu {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  list-style: none;
-  margin-left: 50px; /* geser dari logo */
-  gap: 30px;
-  flex: 1;
-  padding: 0;
 }
 
 .navbar-left {
@@ -46,6 +44,17 @@ body {
   width: auto;
 }
 
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  list-style: none;
+  margin-left: 50px;
+  gap: 30px;
+  flex: 1;
+  padding: 0;
+}
+
 .navbar-menu a {
   color: rgb(0, 0, 0);
   text-decoration: none;
@@ -56,37 +65,6 @@ body {
 
 .navbar-menu a.active {
   color: #000000;
-}
-
-.item-card {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  background: #f4f4f4;
-  padding: 1rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  flex-wrap: wrap;
-}
-
-.item-card .info {
-  flex: 1;
-}
-
-.item-card img {
-  width: 180px;
-  height: auto;
-  max-height: 200px;
-  object-fit: contain;
-  border-radius: 8px;
-}
-
-
-.banner {
-  background-color: #ffffff;
-  padding: 10px 20px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
 }
 
 .navbar ul {
@@ -103,8 +81,7 @@ body {
   display: inline;
 }
 
-
-/* Underline */
+/* Underline efek nav */
 .underline {
   position: absolute;
   bottom: 0;
@@ -115,62 +92,66 @@ body {
   will-change: left, width;
 }
 
-/* Container */
-.container {
-  max-width: 800px;
-  margin: auto;
-  background: white;
-  padding: 20px 50px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* Grid item publik */
+#publicItemsList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 30px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-/* Section */
-.section {
-  margin-bottom: 30px;
+.item-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.section h2 {
-  border-bottom: 2px solid #ccc;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
+/* Kartu individual laporan */
+.item-card {
+  flex: 0 0 calc(50% - 30px);
+  max-width: calc(50% - 30px);
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 1rem;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-button {
-  padding: 10px 15px;
-  background-color: #00b4d8;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+/* Konten di dalam kartu */
+.item-card .info {
+  flex: 1;
 }
 
-button:hover {
-  background-color: #0056b3;
+/* Responsif untuk mobile */
+@media (max-width: 768px) {
+  .item-card {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-ul li {
-  margin: 5px 0;
-  padding: 10px;
-  border-radius: 4px;
-}
-
+/* Banner */
 .banner {
   position: relative;
-  height: 300px; /* <--- ini wajib supaya img bisa menyesuaikan */
+  height: 300px;
+  min-height: 300px; /* Tambahkan ini */
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
 }
+
 
 .banner-img {
   position: absolute;
+  display: block;
   top: 0;
   left: 0;
   width: 100%;
@@ -188,3 +169,59 @@ ul li {
   color: #ffffff;
 }
 
+/* Tombol umum */
+button {
+  padding: 10px 15px;
+  background-color: #00b4d8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* List umum */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+/* Tombol filter */
+.filter-buttons {
+  margin: 20px 0;
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.filter-buttons button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.filter-buttons button:hover {
+  background-color: #0056b3;
+}
+
+/* Footer */
+footer {
+  background-color: #f4f4f4;
+  padding: 10px;
+  text-align: center;
+  border-top: 1px solid #ccc;
+  margin-top: auto; /* penting: dorong footer ke bawah */
+}

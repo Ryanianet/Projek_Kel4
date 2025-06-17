@@ -123,11 +123,6 @@ async function submitReportToFirebase(formElement, type) {
 if (laporLostForm) {
   laporLostForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const user = auth.currentUser;
-    if (!user) {
-      showMessageModal('Login Diperlukan', 'Silakan login terlebih dahulu untuk mengirim laporan.');
-      return;
-    }
     await submitReportToFirebase(laporLostForm, 'hilang');
   });
 }
@@ -136,11 +131,6 @@ if (laporLostForm) {
 if (laporFoundForm) {
   laporFoundForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const user = auth.currentUser;
-    if (!user) {
-      showMessageModal('Login Diperlukan', 'Silakan login terlebih dahulu untuk mengirim laporan.');
-      return;
-    }
     await submitReportToFirebase(laporFoundForm, 'temuan');
   });
 }
