@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prosedur - Lost n Found</title>
+    <link rel="stylesheet" href="stysles.css">
+    <style>
+    /* CSS tambahan untuk meratakan h2 di atas .Op */
+    .container > h2 { /* Target h2 langsung di dalam .container */
+        text-align: left; /* Pastikan rata kiri */
+        margin-top: 20px; /* Jarak dari elemen di atasnya */
+        margin-bottom: 20px; /* Jarak dari .Op di bawahnya */
+        /* Pastikan lebar dan perataan sama dengan .Op jika .Op dipusatkan */
+        max-width: 600px; /* Sesuaikan dengan max-width .Op */
+        margin-left: auto; /* Untuk meratakan dengan .Op yang dipusatkan */
+        margin-right: auto; /* Untuk meratakan dengan .Op yang dipusatkan */
+    }
+
+    .Op {
+          display: flex;
+          /* align-items: flex-start;  // Hapus ini jika flex-direction column sudah membuat h3 & p ke kiri */
+          background: #f4f4f4;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          flex-wrap: wrap;
+          /* Menyesuaikan padding untuk tampilan seperti gambar */
+          padding: 20px 30px;
+          flex-direction: column; /* Memastikan item-item di dalam Op tersusun vertikal */
+          /* Menambahkan properti untuk memberikan ruang di kanan dan memadatkan teks */
+          max-width: 600px; /* Batasi lebar maksimum kotak prosedur */
+          margin-right: auto; /* Dorong kotak ke kiri, menciptakan ruang di kanan */
+          margin-left: auto; /* Pusatkan kotak jika tidak ada elemen lain di kiri */
+          margin-bottom: 50px; /* Memberikan jarak di bawah kotak prosedur */
+    }
+    .Op h3 { /* Ini untuk "KEHILANGAN BARANG" */
+        margin-top: 0; /* Menghilangkan margin atas default untuk h3 di dalam Op */
+        margin-bottom: 10px; /* Menambahkan sedikit ruang di bawah h3 */
+    }
+    .Op p {
+        margin-top: 0; /* Menghilangkan margin atas default untuk p */
+        margin-bottom: 5px; /* Mengurangi ruang di bawah p */
+    }
+    .Op ol {
+        margin-top: 0; /* Menghilangkan margin atas default untuk ol */
+        padding-left: 20px; /* Menyesuaikan indentasi daftar bernomor */
+    }
+    .Op ol li {
+        margin-bottom: 5px; /* Mengurangi ruang antar item daftar */
+    }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+  <div class="navbar-left">
+    <img src="img/logo.png" alt="Lost & Found Logo" class="navbar-logo">
+  </div>
+  <ul class="navbar-menu">
+    <li><a href="Home.html">Beranda</a></li>
+    <li><a href="Prosedur.html" class="active">Prosedur</a></li>
+    <li><a href="Laporan.html">Lapor</a></li>
+    <li><a href="Admin.html">Admin</a></li>
+  </ul>
+</div>
+
+<div class="container">
+    <h2>Prosedur Operasional</h2> <div class="Op">
+       <h3>KEHILANGAN BARANG</h3>
+       <p>Jika kamu kehilangan barang, lakukan langkah-langkah berikut:</p>
+       <ol>
+        <li>Jika kamu merasa kehilangan, ingat kapan terakhir kali kamu bersama dengan barang tersebut.</li>
+        <li>Laporkan dengan mengisi formulir Laporan.</li>
+        <li>Isi formulir dengan rinci, termasuk deskripsi barang, lokasi dan waktu terakhir dilihat, serta informasi kontak kamu untuk memudahkan menghubungi lebih lanjut.</li>
+        <li>Tunggu informasi lanjutan apabila barang ditemukan.</li>
+       </ol>
+    </div>
+
+    <div class="Op">
+        <h3>PENEMUAN BARANG</h3>
+        <p>Jika kamu menemukan barang, lakukan langkah-langkah berikut:</p>
+        <ol>
+            <li>Jika kamu menemukan barang hilang, amankan barang tersebut.</li>
+            <li>Laporkan dengan mengisi formulir berikut</li>
+            <li>Isi formulir dengan rinci, termasuk deskripsi barang, lokasi dan waktu terakhir dilihat, serta informasi kontak kamu untuk memudahkan menghubungi lebih lanjut.</li>
+            <li>Setelah di laporkan melalui link tersebut, mohon kesedian nya untuk menyerahkan barang temuan.</li>
+        </ol>
+    </div>
+</div>
+<script type="module" src="respon.js"></script>
+<script src="animasi.js"></script>
+</body>
+</html>

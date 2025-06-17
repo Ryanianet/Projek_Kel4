@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login - Lost & Found</title>
+  <link rel="stylesheet" href="stysles.css" />
+  <style>
+    body {
+      background-color: #f0f2f5;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .login-container {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .login-container input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .login-container button:hover {
+      background-color: #0056b3;
+    }
+
+    #loginMessage {
+      text-align: center;
+      margin-top: 10px;
+      color: red;
+    }
+
+    .container.hidden {
+      display: none;
+    }
+
+    #logoutBtn {
+      margin-bottom: 20px;
+      background-color: #dc3545;
+    }
+
+    #logoutBtn:hover {
+      background-color: #a71d2a;
+    }
+
+    .item-card button {
+      margin-top: 10px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="img/logo.png" alt="Logo" class="navbar-logo">
+    </div>
+    <ul class="navbar-menu">
+      <li><a href="Home.html">Beranda</a></li>
+      <li><a href="Prosedur.html">Prosedur</a></li>
+      <li><a href="Laporan.html">Lapor</a></li>
+      <li><a href="Admin.html" class="active">Admin</a></li>
+    </ul>
+  </div>
+
+  <!-- Form Login Admin -->
+  <div class="login-container" id="loginContainer">
+    <h2>Login Admin</h2>
+    <input type="email" id="loginEmail" placeholder="Email" required />
+    <input type="password" id="loginPassword" placeholder="Password" required />
+    <button id="loginBtn">Login</button>
+    <p id="loginMessage"></p>
+  </div>
+
+  <!-- Panel Admin -->
+  <div class="container hidden" id="adminContainer">
+    <h1>Validasi Laporan</h1>
+    <button id="logoutBtn">Logout</button>
+    <div id="laporanContainer"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import {
+      getAuth, signInWithEmailAndPassword, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
+    import {
+      getDatabase, ref, onValue, update, get, remove
+    } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyADC13ymwj8_NKLZt8TgxEYEzzw2jYfvjc",
+      authDomain: "tugaspraktik9.firebaseapp.com",
+      databaseURL: "https://tugaspraktik9-default-rtdb.firebaseio.com",
+      projectId: "tugaspraktik9",
+      storageBucket: "tugaspraktik9.appspot.com",
+      messagingSenderId: "1025237797274",
+      appId: "1:1025237797274:web:7c40f6a3ce147f3dbb9223"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const loginBtn = document.getElementById("loginBtn");
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginMessage = document.getElementById("loginMessage");
+    const loginContainer = document.getElementById("loginContainer");
+    const adminContainer = document.getElementById("adminContainer");
+    const laporanContainer = document.getElementById("laporanContainer");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    loginBtn.addEventListener("click", () => {
+      const email = loginEmail.value;
+      const password = loginPassword.value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          loginMessage.textContent = "";
+        })
+        .catch((error) => {
+          loginMessage.textContent = "Gagal login: " + error.message;
+        });
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const userRef = ref(db, `users/${uid}`);
+        const snapshot = await get(userRef);
+
+        if (snapshot.exists() && snapshot.val().role === "admin") {
+          loginContainer.classList.add("hidden");
+          adminContainer.classList.remove("hidden");
+          tampilkanLaporan();
+        } else {
+          loginMessage.textContent = "Akun ini bukan admin.";
+          auth.signOut();
+        }
+      } else {
+        loginContainer.classList.remove("hidden");
+        adminContainer.classList.add("hidden");
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      auth.signOut()
+        .then(() => {
+          loginContainer.classList.remove("hidden");
+          adminContainer.classList.add("hidden");
+        })
+        .catch((error) => {
+          alert("Gagal logout: " + error.message);
+        });
+    });
+
+    function tampilkanLaporan() {
+      const dataRef = ref(db, `artifacts/default-app-id/public/data/lostAndFound`);
+      onValue(dataRef, (snapshot) => {
+        const data = snapshot.val();
+        laporanContainer.innerHTML = "";
+
+        if (data) {
+          Object.entries(data).forEach(([key, laporan]) => {
+            const div = document.createElement("div");
+            div.className = "item-card";
+
+            let statusLabel = '';
+            if (laporan.disetujui) {
+              statusLabel = '<span style="color: green; font-weight: bold;">[Disetujui]</span>';
+            } else if (laporan.ditolak) {
+              statusLabel = '<span style="color: red; font-weight: bold;">[Ditolak]</span>';
+            } else {
+              statusLabel = '<span style="color: orange; font-weight: bold;">[Menunggu Persetujuan]</span>';
+            }
+
+            div.innerHTML = `
+              <div class="info">
+                <h3>${laporan.tipe.toUpperCase()}: ${laporan.barang} ${statusLabel}</h3>
+                <p><strong>Nama:</strong> ${laporan.nama}</p>
+                <p><strong>Email:</strong> ${laporan.email}</p>
+                <p><strong>No HP:</strong> ${laporan.nohp}</p>
+                <p><strong>Deskripsi:</strong> ${laporan.deskripsi}</p>
+                <p><strong>Tempat:</strong> ${laporan.tempat}</p>
+                <p><strong>Waktu:</strong> ${laporan.waktu}</p>
+                ${!laporan.disetujui && !laporan.ditolak ? `<button onclick="setujuiLaporan('${key}')">Setujui</button>` : ''}
+                ${!laporan.disetujui && !laporan.ditolak ? `<button onclick="tolakLaporan('${key}')">Tolak</button>` : ''}
+                <button onclick="hapusLaporan('${key}')" style="background-color: #dc3545;">Hapus</button>
+              </div>
+            `;
+            laporanContainer.appendChild(div);
+          });
+        } else {
+          laporanContainer.innerHTML = "<p>Tidak ada laporan ditemukan.</p>";
+        }
+      });
+    }
+
+    window.setujuiLaporan = function (id) {
+      const itemRef = ref(db, `artifacts/default-app-id/public/data/lostAndFound/${id}`);
+      update(itemRef, { disetujui: true, ditolak: false })
+        .then(() => alert("Laporan disetujui."))
+        .catch((err) => alert("Gagal menyetujui: " + err.message));
+    };
+
+    window.tolakLaporan = function (id) {
+      const itemRef = ref(db, `artifacts/default-app-id/public/data/lostAndFound/${id}`);
+      update(itemRef, { ditolak: true, disetujui: false })
+        .then(() => alert("Laporan ditolak."))
+        .catch((err) => alert("Gagal menolak: " + err.message));
+    };
+
+    window.hapusLaporan = function (id) {
+      if (confirm("Apakah Anda yakin ingin menghapus laporan ini?")) {
+        const itemRef = ref(db, `artifacts/default-app-id/public/data/lostAndFound/${id}`);
+        remove(itemRef)
+          .then(() => alert("Laporan berhasil dihapus."))
+          .catch((err) => alert("Gagal menghapus laporan: " + err.message));
+      }
+    };
+  </script>
+  <script src="animasi.js"></script>
+</body>
+</html>

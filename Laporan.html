@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laporan - Lost n Found</title>
+  <link rel="stylesheet" href="stysles.css" />
+  <style>
+    /* Gaya untuk body agar background putih memanjang */
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffff;
+    }
+
+    .btn-form {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background-color: #007bff;
+      color: white;
+      margin: 10px 50px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-form:hover {
+      background-color: #0056b3;
+    }
+
+    /* Gaya untuk memusatkan tombol */
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem; /* Tambahkan sedikit ruang di bawah tombol */
+    }
+
+    /* Menyesuaikan container utama agar dapat mengisi sisa ruang */
+    .container {
+      flex-grow: 1;
+    }
+
+    .navbar {
+      flex-shrink: 0;
+    }
+
+    /* --- Gaya untuk Formulir yang Muncul di Bawah (umum untuk kedua form) --- */
+    #lostItemFormSection, #foundItemFormSection {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: max-height 0.7s ease-out, opacity 0.7s ease-out, transform 0.7s ease-out;
+      padding: 0 2rem;
+      margin-top: 0;
+    }
+
+    #lostItemFormSection.show-form, #foundItemFormSection.show-form {
+      max-height: 1000px;
+      opacity: 1;
+      transform: translateY(0);
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    /* Gaya untuk form di dalam section (umum) */
+    #lostItemFormSection .form-content, #foundItemFormSection .form-content {
+      background-color: white;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+      width: 100%;
+      max-width: none;
+      position: static;
+      transform: none;
+      transition: none;
+    }
+
+    #lostItemFormSection h1, #foundItemFormSection h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    #lostItemFormSection form, #foundItemFormSection form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #lostItemFormSection label, #foundItemFormSection label {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    #lostItemFormSection input,
+    #lostItemFormSection textarea,
+    #foundItemFormSection input,
+    #foundItemFormSection textarea {
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 0.3rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #lostItemFormSection button[type="submit"],
+    #foundItemFormSection button[type="submit"] {
+      margin-top: 1.5rem;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+      padding: 0.8rem;
+    }
+
+    #lostItemFormSection button[type="submit"]:hover,
+    #foundItemFormSection button[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    /* Styles for the custom message modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    }
+
+    .modal-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .modal-content p {
+      margin-bottom: 1.5rem;
+      color: #555;
+    }
+
+    .modal-content button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+
+    .modal-content button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Ensure the spinner and loading overlay from style.css are active */
+    #loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    }
+
+    #loadingOverlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .spinner {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #3498db;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Custom Message Modal -->
+  <div id="messageModal" class="modal-overlay">
+    <div class="modal-content">
+      <h2 id="modalTitle"></h2>
+      <p id="modalMessage"></p>
+      <button id="modalCloseBtn">Tutup</button>
+    </div>
+  </div>
+
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="img/logo.png" alt="Lost & Found Logo" class="navbar-logo">
+    </div>
+    <ul class="navbar-menu">
+      <li><a href="Home.html">Beranda</a></li>
+      <li><a href="Prosedur.html">Prosedur</a></li>
+      <li><a href="Laporan.html" class="active">Lapor</a></li>
+      <li><a href="Admin.html">Admin</a></li>
+    </ul>
+  </div>
+
+  <div class="container">
+    <h1>Formulir Laporan Barang</h1>
+    <p>Silakan pilih salah satu opsi di bawah ini untuk melaporkan barang:</p>
+
+    <div class="button-container">
+      <button id="showLostFormBtn" class="btn-form">Lapor Barang Hilang</button>
+      <button id="showFoundFormBtn" class="btn-form">Lapor Barang Temuan</button>
+    </div>
+
+    <div id="lostItemFormSection">
+      <div class="form-content">
+        <h1>Lapor Barang Hilang</h1>
+        <form id="laporLostForm">
+          <label for="lost_email">Email:</label>
+          <input type="email" id="lost_email" required>
+
+          <label for="lost_nama">Nama Pelapor:</label>
+          <input type="text" id="lost_nama" required>
+
+          <label for="lost_nohp">Nomor HP:</label>
+          <input type="tel" id="lost_nohp" required>
+
+          <label for="lost_barang">Nama Barang Hilang:</label>
+          <input type="text" id="lost_barang" required>
+
+          <label for="lost_deskripsi">Deskripsi Barang:</label>
+          <textarea id="lost_deskripsi" rows="4" required></textarea>
+
+          <label for="lost_tempat">Tempat Kehilangan:</label>
+          <input type="text" id="lost_tempat" required>
+
+          <label for="lost_waktu">Waktu Kehilangan:</label>
+          <input type="datetime-local" id="lost_waktu" required>
+
+          <!-- Input gambar dihapus -->
+
+          <button type="submit">Kirim Laporan Hilang</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="foundItemFormSection">
+      <div class="form-content">
+        <h1>Lapor Barang Temuan</h1>
+        <form id="laporFoundForm">
+          <label for="found_email">Email Penemu:</label>
+          <input type="email" id="found_email" required>
+
+          <label for="found_nama">Nama Penemu:</label>
+          <input type="text" id="found_nama" required>
+
+          <label for="found_nohp">Nomor HP Penemu:</label>
+          <input type="tel" id="found_nohp" required>
+
+          <label for="found_barang">Nama Barang Ditemukan:</label>
+          <input type="text" id="found_barang" required>
+
+          <label for="found_deskripsi">Deskripsi Barang:</label>
+          <textarea id="found_deskripsi" rows="4" required></textarea>
+
+          <label for="found_tempat">Tempat Ditemukan:</label>
+          <input type="text" id="found_tempat" required>
+
+          <label for="found_waktu">Waktu Ditemukan:</label>
+          <input type="datetime-local" id="found_waktu" required>
+
+          <!-- Input gambar dihapus -->
+
+          <button type="submit">Kirim Laporan Temuan</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="animasi.js"></script>
+  <!-- Link ke file JavaScript baru yang terhubung dengan Firebase -->
+  <script type="module" src="input.js"></script>
+</body>
+</html>
